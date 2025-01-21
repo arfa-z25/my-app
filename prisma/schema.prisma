@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+        
+        
+
+
+
+model Employee {
+  id            Int        @id @default(autoincrement())
+  First_Name    String
+  Last_Name     String
+  Department    String
+  phone_no      String     @unique
+  Role          String
+  email         String     @unique
+  password      String
+  job_Title     String
+  pic           String?
+  messages      Message[]  // Define the reverse relation here
+  chats         Chat[]
+  leaves        Leave[]
+  holidays      Holiday[]
+  offs          Off[]
+  times         TimeOffRequest[]
+ 
+  
+}
+
+model Message {
+  m_id        Int      @id @default(autoincrement())
+  content     String
+  Date        DateTime @default(now())
+  employee_id Int
+  employee    Employee @relation(fields: [employee_id], references: [id]) 
+}
+
+model Chat {
+  m_id        Int      @id @default(autoincrement())
+  content     String
+  employee_id Int
+  employee    Employee @relation(fields: [employee_id], references: [id]) 
+}
+
+model Leave {
+  leave_id    Int      @id @default(autoincrement())
+  leave_type  String
+  start_date  DateTime
+  end_date    DateTime
+  reason      String
+  employee_id Int
+  employee    Employee @relation(fields: [employee_id], references: [id]) 
+}
+
+model Holiday {
+  leave_id    Int      @id @default(autoincrement())
+  leave_type  String
+  start_date  DateTime
+  end_date    DateTime
+  reason      String?
+  employee_id Int
+  employee    Employee @relation(fields: [employee_id], references: [id]) 
+}
+model Off {
+  leave_id    Int      @id @default(autoincrement())
+  leave_type  String
+  start_date  DateTime
+  end_date    DateTime
+  reason      String?
+  employee_id Int
+  status      String?
+  employee    Employee @relation(fields: [employee_id], references: [id]) 
+ 
+}
+
+model TimeOffRequest {
+  request_id  Int      @id @default(autoincrement()) // Auto-incrementing request ID
+  leave_type  String   // Type of leave or time off (e.g., vacation, sick)
+  start_date  DateTime // Start date of the time off
+  end_date    DateTime // End date of the time off
+  reason      String?  // Optional reason for the time off
+  employee_id Int      // Foreign key to the Employee model
+  status      String?  // Optional status (e.g., pending, approved, rejected)
+
+  // Relating this request to an employee
+  employee    Employee @relation(fields: [employee_id], references: [id]) 
+}
+
+
+model Project {
+  p_id        Int      @id @default(autoincrement())
+  p_name      String
+  p_status    String
+  p_budget    String
+  p_deadline  DateTime
+  employee_id Int
+  status      String? 
+
+  
+}
+
+
+
+
+
